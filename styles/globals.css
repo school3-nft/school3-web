@@ -4,7 +4,7 @@
 
 @layer components {
   .card {
-    @apply bg-white py-2 px-4 rounded-lg shadow-lg;
+    @apply bg-blue-200 py-2 px-4 rounded-lg shadow-lg;
   }
 
   .input-text {
@@ -66,5 +66,4 @@ h6 {
 
 main {
   background: #ffff;
-  background-image: url("https://www.transparenttextures.com/patterns/cardboard.png");
 }

@@ -7,11 +7,21 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#ffe9a0",
-        secondary: "#ff6e6c",
-        background: "#242526",
-        contrast: "#67568c",
-        headline: "#1f1235",
+        primary: "#3da9fc",
+        secondary: "#094067",
+        background: "#ffffff",
+        contrast: "#ef4565",
+        txt: "#5f6c7b",
+      },
+      keyframes: {
+        comeFromTop: {
+          "0%": {
+            transform: "translateY(1500px)",
+          },
+          "100%": {
+            transform: "translateY(0)",
+          },
+        },
       },
     },
   },
