@@ -1,39 +1,51 @@
+import Image from "next/image";
 import Link from "next/link";
 import { useUser } from "../hooks/use-user.hook";
 import { signOut } from "../utils/firebase.util";
 import Button from "./button.component";
 
 export default function Header() {
-  const { isLoggedIn } = useUser();
+  const {
+    user: { username, avatar },
+    isLoggedIn,
+  } = useUser();
 
   return (
-    <div className="w-[90vw] mx-auto bg-primary mix-blend-multiply px-2 border-blue-800 rounded-b-3xl flex space-between transition ease-out">
+    <div className="w-[90vw] mx-auto  bg-primary mix-blend-multiply px-2 border-blue-800 rounded-b-3xl flex space-between transition ease-out">
       <Link href="/" className="my-auto p-2">
         <h1 className="font-serif text-background text-4xl w-fit">
           School<span className="font-sans text-5xl text-contrast">3</span>
         </h1>
       </Link>
       <div className="basis-3/5"></div>
-      <div className=""></div>
       {isLoggedIn ? (
-        <Button className="m-auto mr-2" onClick={signOut}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+        <nav className="flex justify-between items-center ml-auto gap-4">
+          <Link href={`/users/${username}`} className="w-12 h-12 relative">
+            <Image
+              className="rounded-full border-secondary border-2"
+              src={avatar!}
+              alt="avatar"
+              fill
             />
-          </svg>
-
-          <p>Sign&nbsp;Out</p>
-        </Button>
+          </Link>
+          <Button className="m-auto mr-2" onClick={signOut}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            <p>Sign&nbsp;Out</p>
+          </Button>
+        </nav>
       ) : (
         <Link href="/sign-in" className="m-auto mr-2 text-black">
           <Button>

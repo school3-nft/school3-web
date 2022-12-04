@@ -18,7 +18,7 @@ export default function Button({ children, className, ...otherProps }: Props) {
     <button
       {...otherProps}
       className={`${
-        isClicked && "scale-90"
+        isClicked ? "scale-90" : ""
       } flex justify-evenly gap-2 text-white bg-secondary rounded-lg w-max px-4 py-2 h-max transition ease-out hover:bg-blue-500 ${className}`}
       onMouseDown={() => setIsClicked(true)}
       onMouseUp={() => setIsClicked(false)}
