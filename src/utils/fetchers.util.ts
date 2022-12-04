@@ -1,6 +1,8 @@
 import { Result } from "./types.util";
 
-const API_URL = "http://20.8.240.128:8000";
+const API_URL = process.env.API_URL
+  ? process.env.API_URL
+  : "http://localhost:8080";
 
 export type WalletData = {
   account_address: string;
