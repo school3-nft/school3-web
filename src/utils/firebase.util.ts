@@ -19,7 +19,7 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { User, UserDoc, UserSimple } from "./types.util";
+import { SignState, User, UserDoc, UserSimple } from "./types.util";
 import randUsername from "./rand-username.utils";
 import { fetchNewWallet } from "./fetchers.util";
 
@@ -69,7 +69,7 @@ export const signOut = async () => {
 
 export const onAuthChange = (
   setUser: Dispatch<SetStateAction<UserSimple>>,
-  setIsLoggedIn: Dispatch<SetStateAction<boolean>>
+  setIsLoggedIn: Dispatch<SetStateAction<SignState>>
 ) =>
   onAuthStateChanged(auth, async (fireUser) => {
     if (fireUser) {
@@ -79,14 +79,14 @@ export const onAuthChange = (
         username: user.username,
         avatar: user.avatar,
       });
-      setIsLoggedIn(true);
+      setIsLoggedIn("true");
     } else {
       setUser({
         uid: "",
         username: "",
         avatar: "",
       });
-      setIsLoggedIn(false);
+      setIsLoggedIn("false");
     }
   });
 

@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 
 import { onAuthChange } from "../utils/firebase.util";
 
-import { UserSimple } from "../utils/types.util";
+import { SignState, UserSimple } from "../utils/types.util";
 
 type Props = {
   children: JSX.Element;
@@ -10,7 +10,7 @@ type Props = {
 
 type UserContextType = {
   user: UserSimple;
-  isLoggedIn: boolean;
+  isLoggedIn: SignState;
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -19,16 +19,17 @@ export const UserContext = createContext<UserContextType>({
     username: "",
     avatar: "",
   },
-  isLoggedIn: false,
+  isLoggedIn: "loading",
 });
 
 export default function UserProvider({ children }: Props) {
   const [user, setUser] = useState<UserSimple>({
-    uid: "",
+    uid: "loading",
     username: "",
     avatar: "",
   });
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  const [isLoggedIn, setIsLoggedIn] = useState<SignState>("loading");
 
   useEffect(() => {
     const unsubscribe = onAuthChange(setUser, setIsLoggedIn);

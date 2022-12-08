@@ -23,7 +23,7 @@ export default function SignIn() {
   }>({ email: "", password: "", username: "" });
 
   useEffect(() => {
-    if (isLoggedIn) router.push("/");
+    if (isLoggedIn === "true") router.push("/");
   }, [isLoggedIn]);
 
   const onRegisterSubmit = (e: FormEvent<HTMLFormElement>) => {

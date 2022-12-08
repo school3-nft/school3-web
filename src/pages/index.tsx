@@ -11,9 +11,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Overlay>
-          <p>nice</p>
-        </Overlay>
+        <Overlay>nice</Overlay>
       </Layout>
     </>
   );

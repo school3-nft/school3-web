@@ -2,6 +2,7 @@ import Head from "next/head";
 import {
   createAndAddWallet,
   getUserByUsername,
+  getWallet,
 } from "../../utils/firebase.util";
 import Layout from "../../components/layout.component";
 import Overlay from "../../components/overlay.component";
@@ -9,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "../../components/button.component";
 import { fetchNewWallet } from "../../utils/fetchers.util";
+import { useQuery } from "@tanstack/react-query";
+import Circle from "../../components/loading-circle.component";
 
 export async function getServerSideProps({ params: { username } }: any) {
   const profileUser = await getUserByUsername(username);
@@ -35,6 +38,51 @@ type Props = {
 export default function UserPage({ profileUser }: Props) {
   const { uid, username, avatar, account_address, account_balance } =
     profileUser;
+  const { data, isLoading } = useQuery(["repoData"], () => getWallet(uid));
+
+  const UserInfo = () => (
+    <div className="w-full flex gap-8">
+      <Link href={`/users/${username}`} className="w-32 h-32 relative">
+        <Image src={avatar!} alt="avatar" fill />
+      </Link>
+      <div className="flex flex-col gap-6">
+        <div>
+          <p className="text-xl text-primary">
+            Username:
+            <span className="ml-4 text-lg text-black font-mono ">
+              {username}
+            </span>
+          </p>
+        </div>
+        {account_address ? (
+          <>
+            <div>
+              <p className="text-xl text-primary">
+                Account address:
+                <span className="ml-4 text-lg text-black font-mono ">
+                  {account_address}
+                </span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xl text-primary">
+                Account balance:
+                <span className="ml-4 text-lg text-black font-mono ">
+                  {account_balance}
+                </span>
+              </p>
+            </div>
+          </>
+        ) : (
+          <div className="h-full grid place-content-center">
+            <Button className="w-full" onClick={() => createAndAddWallet(uid)}>
+              Create Wallet
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -45,51 +93,14 @@ export default function UserPage({ profileUser }: Props) {
       </Head>
       <Layout>
         <Overlay>
-          <section className="card mt-12">
-            <div className="w-full flex gap-8">
-              <Link href={`/users/${username}`} className="w-32 h-32 relative">
-                <Image src={avatar!} alt="avatar" fill />
-              </Link>
-              <div className="flex flex-col gap-6">
-                <div>
-                  <p className="text-xl text-primary">
-                    Username:
-                    <span className="ml-4 text-lg text-black font-mono ">
-                      {username}
-                    </span>
-                  </p>
-                </div>
-                {account_address ? (
-                  <>
-                    <div>
-                      <p className="text-xl text-primary">
-                        Account address:
-                        <span className="ml-4 text-lg text-black font-mono ">
-                          {account_address}
-                        </span>
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xl text-primary">
-                        Account balance:
-                        <span className="ml-4 text-lg text-black font-mono ">
-                          {account_balance}
-                        </span>
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <div className="h-full grid place-content-center">
-                    <Button
-                      className="w-full"
-                      onClick={() => createAndAddWallet(uid)}
-                    >
-                      Create Wallet
-                    </Button>
-                  </div>
-                )}
+          <section className="card mt-12 h-[150px] ">
+            {isLoading ? (
+              <div className="h-full grid place-items-center">
+                <Circle className="text-contrast h-16 w-16" />
               </div>
-            </div>
+            ) : (
+              <UserInfo />
+            )}
           </section>
         </Overlay>
       </Layout>

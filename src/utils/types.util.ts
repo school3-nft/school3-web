@@ -25,3 +25,5 @@ export type Result<T> = {
   data: T;
   returnCode: string;
 };
+
+export type SignState = "false" | "true" | "loading";
