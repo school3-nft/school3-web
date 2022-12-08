@@ -1,8 +1,32 @@
+import { useQuery } from "@tanstack/react-query";
 import Head from "next/head";
+import { useState } from "react";
+import AddAuctionBtn from "../components/add-auction-btn.component";
+import AddAuctionDialog from "../components/add-auction-dialog.component";
 import Layout from "../components/layout.component";
 import Overlay from "../components/overlay.component";
+import { useUser } from "../hooks/use-user.hook";
+import { getIsAdmin } from "../utils/firebase.util";
 
 export default function Home() {
+  const {
+    user: { uid },
+    isLoggedIn,
+  } = useUser();
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
+
+  const { data } = useQuery({
+    queryKey: ["admin", uid],
+    queryFn: () => getIsAdmin(uid),
+    enabled: !!uid,
+  });
+
+  const isAdmin = data && isLoggedIn;
+
+  const closeDialog = () => setIsOpenDialog(false);
+
+  const openDialog = () => setIsOpenDialog(true);
+
   return (
     <>
       <Head>
@@ -11,7 +35,11 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Overlay>nice</Overlay>
+        <Overlay>
+          <p className="mt-12 w-fit mx-auto text-4xl font-mono">MAIN</p>
+          <>{!!isAdmin && <AddAuctionBtn openDialog={openDialog} />}</>
+          <AddAuctionDialog isOpen={isOpenDialog} close={closeDialog} />
+        </Overlay>
       </Layout>
     </>
   );

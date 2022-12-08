@@ -67,6 +67,13 @@ export const signOut = async () => {
     });
 };
 
+export const getIsAdmin = async (uid: string) => {
+  let returnCode: string = "success";
+  const { isAdmin } = await getUserById(uid);
+
+  return isAdmin;
+};
+
 export const onAuthChange = (
   setUser: Dispatch<SetStateAction<UserSimple>>,
   setIsLoggedIn: Dispatch<SetStateAction<SignState>>
@@ -101,7 +108,11 @@ export const getUserById = async (uid: string) => {
 export const getWallet = async (uid: string) => {
   const docSnap = await getDoc(doc(db, "users", uid));
   const { account_address, account_balance } = docSnap.data()!;
-  if (docSnap.exists()) return { account_address, account_balance };
+  if (docSnap.exists())
+    return { account_address, account_balance } as {
+      account_address: string;
+      account_balance: string;
+    };
   throw Error("No User with That Id");
 };
 
@@ -115,6 +126,7 @@ export const getUserByUsername = async (username: string) => {
     avatar: "",
     account_address: "",
     account_balance: "",
+    isAdmin: false,
   };
 
   querySnapshot.forEach((doc) => {
@@ -136,6 +148,7 @@ export const fireAddUserToDB = async (
     avatar: src ? src : user.photoURL,
     account_address: "",
     account_balance: "",
+    isAdmin: false,
   } as UserDoc);
 };
 
@@ -147,7 +160,7 @@ export const createAndAddWallet = async (uid: string) => {
   const docRef = doc(db, "users", uid);
 
   if (returnCode === "200") {
-    updateDoc(docRef, {
+    await updateDoc(docRef, {
       account_address,
       account_balance,
     });

@@ -9,8 +9,7 @@ import Overlay from "../../components/overlay.component";
 import Image from "next/image";
 import Link from "next/link";
 import Button from "../../components/button.component";
-import { fetchNewWallet } from "../../utils/fetchers.util";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Circle from "../../components/loading-circle.component";
 
 export async function getServerSideProps({ params: { username } }: any) {
@@ -30,21 +29,34 @@ type Props = {
     uid: string;
     username: string;
     avatar: string;
-    account_address: string;
-    account_balance: string;
+    account_address_init: string;
+    account_balance_init: string;
   };
 };
 
 export default function UserPage({ profileUser }: Props) {
-  const { uid, username, avatar, account_address, account_balance } =
+  const { uid, username, avatar, account_address_init, account_balance_init } =
     profileUser;
-  const { data, isLoading } = useQuery(["repoData"], () => getWallet(uid));
+  const queryClient = useQueryClient();
+  const {
+    data,
+    isFetching,
+    isLoading: isWalletLoading,
+  } = useQuery(["wallet"], () => getWallet(uid));
+
+  const mutate = useMutation(async () => await createAndAddWallet(uid), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["wallet"]);
+    },
+  });
+
+  const isLoading = isWalletLoading || isFetching || mutate.isLoading;
 
   const UserInfo = () => (
     <div className="w-full flex gap-8">
-      <Link href={`/users/${username}`} className="w-32 h-32 relative">
+      <div className="w-32 h-32 relative">
         <Image src={avatar!} alt="avatar" fill />
-      </Link>
+      </div>
       <div className="flex flex-col gap-6">
         <div>
           <p className="text-xl text-primary">
@@ -54,13 +66,13 @@ export default function UserPage({ profileUser }: Props) {
             </span>
           </p>
         </div>
-        {account_address ? (
+        {data?.account_address ? (
           <>
             <div>
               <p className="text-xl text-primary">
                 Account address:
                 <span className="ml-4 text-lg text-black font-mono ">
-                  {account_address}
+                  {data!.account_address}
                 </span>
               </p>
             </div>
@@ -68,14 +80,14 @@ export default function UserPage({ profileUser }: Props) {
               <p className="text-xl text-primary">
                 Account balance:
                 <span className="ml-4 text-lg text-black font-mono ">
-                  {account_balance}
+                  {data!.account_balance}
                 </span>
               </p>
             </div>
           </>
         ) : (
           <div className="h-full grid place-content-center">
-            <Button className="w-full" onClick={() => createAndAddWallet(uid)}>
+            <Button className="w-full" onClick={mutate.mutate}>
               Create Wallet
             </Button>
           </div>

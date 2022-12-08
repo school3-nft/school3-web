@@ -11,6 +11,7 @@ export type User = {
   email: string;
   account_address: string;
   account_balance: string;
+  isAdmin: boolean;
 };
 
 export type UserDoc = {
@@ -19,6 +20,7 @@ export type UserDoc = {
   email: string;
   account_address: string;
   account_balance: string;
+  isAdmin: boolean;
 };
 
 export type Result<T> = {
