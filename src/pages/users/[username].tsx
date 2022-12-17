@@ -11,6 +11,8 @@ import Link from "next/link";
 import Button from "../../components/button.component";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Circle from "../../components/loading-circle.component";
+import { useState } from "react";
+import AddTokenDialog from "../../components/add-token-dialog.component";
 
 export async function getServerSideProps({ params: { username } }: any) {
   const profileUser = await getUserByUsername(username);
@@ -49,6 +51,8 @@ export default function UserPage({ profileUser }: Props) {
       queryClient.invalidateQueries(["wallet"]);
     },
   });
+
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
 
   const isLoading = isWalletLoading || isFetching || mutate.isLoading;
 
@@ -105,7 +109,7 @@ export default function UserPage({ profileUser }: Props) {
       </Head>
       <Layout>
         <Overlay>
-          <section className="card mt-12 h-[150px] ">
+          <section className="card mt-12 h-[150px]">
             {isLoading ? (
               <div className="h-full grid place-items-center">
                 <Circle className="text-contrast h-16 w-16" />
@@ -114,6 +118,15 @@ export default function UserPage({ profileUser }: Props) {
               <UserInfo />
             )}
           </section>
+          <section className="flex flex-col mt-4 items-center">
+            <Button className="px-8" onClick={() => setIsOpenDialog(true)}>
+              Add Token
+            </Button>
+          </section>
+          <AddTokenDialog
+            isOpen={isOpenDialog}
+            close={() => setIsOpenDialog(false)}
+          />
         </Overlay>
       </Layout>
     </>
