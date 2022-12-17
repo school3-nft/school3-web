@@ -18,8 +18,9 @@ import {
   where,
   getDocs,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
-import { SignState, User, UserDoc, UserSimple } from "./types.util";
+import { SignState, User, UserDoc, UserSimple, Token, TokenDoc, Auction, AuctionDoc, TokenType } from "./types.util";
 import randUsername from "./rand-username.utils";
 import { fetchNewWallet } from "./fetchers.util";
 
@@ -170,3 +171,82 @@ export const createAndAddWallet = async (uid: string) => {
 
   return { account_address, account_balance };
 };
+
+export const createToken = async (
+    token_id: string,
+    ipfs: string,
+    owner_id: string,
+    type: TokenType,
+    author: string,
+    description: string,
+) => {
+    const docRef = await setDoc(doc(db, "tokens", token_id), {
+        ipfs: ipfs,
+        owner_id: owner_id,
+        type: type,
+        author: author,
+        description: description
+    } as TokenDoc);
+};
+
+export const getTokenById = async (token_id: string) => {
+    const docSnap = await getDoc(doc(db, "tokens", token_id));
+    if (docSnap.exists()) return { token_id, ...(docSnap.data() as TokenDoc)};
+    throw Error("No Token with That Id");
+}
+export const getTokensByUid = async (uid: string) => {
+    const q = query(collection(db, "tokens"), where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+    let token: Token = {
+        token_id: "",
+        ipfs: "",
+        owner_id: "",
+        type: "image",
+        author: "",
+        description: "",
+    }
+    querySnapshot.forEach((doc) => {
+        const token_id: string = doc.id;
+        token = { token_id, ...doc.data() } as Token;
+    });
+
+    return token;
+}
+
+export const createAuction = async (
+    auction_id: string,
+    token_id: string,
+    duration: Timestamp,
+) => {
+    const docRef = await setDoc(doc(db, "auctions", auction_id), {
+        currentBid: "",
+        token_id: token_id,
+        creationDate: Timestamp.fromDate(new Date()),
+        duration: duration,
+    } as AuctionDoc);
+};
+
+export const getAuctionById = async (auction_id: string) => {
+    const docSnap = await getDoc(doc(db, "auctions", auction_id));
+    if (docSnap.exists()) return { auction_id, ...(docSnap.data() as AuctionDoc)};
+    throw Error("No Auction with that Id");
+}
+export const getAuctions = async () => {
+    const auctions: Auction[] = new Array();
+    const querySnapshot = await getDocs(collection(db, "auctions"));
+    let auction: Auction = {
+        auction_id: "",
+        currentBid: "",
+        token_id: "",
+        creationDate: Timestamp.fromDate(new Date("")),
+        duration: Timestamp.fromDate(new Date("")),
+    };
+
+    querySnapshot.forEach((doc) => {
+        const auction_id: string = doc.id;
+        auction = {auction_id, ...doc.data() } as Auction;
+        auctions.push(auction);
+    });
+
+    return auctions;
+}
