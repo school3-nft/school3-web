@@ -18,8 +18,9 @@ import {
   where,
   getDocs,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
-import { SignState, User, UserDoc, UserSimple } from "./types.util";
+import { SignState, User, UserDoc, UserSimple, Token, TokenDoc, Auction, AuctionDoc, TokenType } from "./types.util";
 import randUsername from "./rand-username.utils";
 import { fetchNewWallet } from "./fetchers.util";
 
