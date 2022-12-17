@@ -171,3 +171,47 @@ export const createAndAddWallet = async (uid: string) => {
 
   return { account_address, account_balance };
 };
+
+// createToken
+export const createToken = async (
+    token_id: string,
+    ipfs: string,
+    owner_id: string,
+    type: TokenType,
+    author: string,
+    description: string,
+) => {
+    const docRef = await setDoc(doc(db, "tokens", token_id), {
+        ipfs: ipfs,
+        owner_id: owner_id,
+        type: type,
+        author: author,
+        description: description
+    } as TokenDoc);
+};
+
+// getTokenById
+export const getTokenById = async (token_id: string) => {
+    const docSnap = await getDoc(doc(db, "tokens", token_id));
+    if (docSnap.exists()) return { token_id, ...(docSnap.data() as TokenDoc)};
+    throw Error("No Token with That Id");
+}
+// getTokensByUid
+export const getTokensByUid = async (uid: string) => {
+    const q = query(collection(db, "tokens"), where("uid", "==", uid));
+    const querySnapshot = await getDocs(q);
+    let token: Token = {
+        token_id: "",
+        ipfs: "",
+        owner_id: "",
+        type: "image",
+        author: "",
+        description: "",
+    }
+    querySnapshot.forEach((doc) => {
+        const token_id: string = doc.id;
+        token = { token_id, ...doc.data() } as Token;
+    });
+
+    return token;
+}
