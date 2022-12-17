@@ -4,6 +4,7 @@ import { useUser } from "../hooks/use-user.hook";
 import { signOut } from "../utils/firebase.util";
 import Button from "./button.component";
 import LoadingCircle from "./loading-circle.component";
+import Logo from "../public/logo.png";
 import Circle from "./loading-circle.component";
 
 export default function Header() {
@@ -68,17 +69,19 @@ export default function Header() {
 
   return (
     <div className="w-[90vw] mx-auto  bg-primary mix-blend-multiply px-2 border-blue-800 rounded-b-3xl flex space-between transition ease-out">
-      <Link href="/" className="my-auto p-2">
-        <h1 className="font-serif text-background text-4xl w-fit">
-          School<span className="font-sans text-5xl text-contrast">3</span>
-        </h1>
-      </Link>
-      <div className="basis-3/5"></div>
-      {isLoggedIn === "loading" ? (
-        <LoadingCircle className="w-8 h-8 text-contrast m-auto mr-8" />
-      ) : (
-        <UserManager m-auto mr-2 />
-      )}
+      <div className="flex-1"></div>
+      <div className="flex-[3_1_0%] w-full grid place-items-center">
+        <Link href="/" className="inline-block w-16 h-16 relative">
+          <Image src={Logo} alt="School3" fill />
+        </Link>
+      </div>
+      <div className="flex-1 grid place-items-center">
+        {isLoggedIn === "loading" ? (
+          <LoadingCircle className="w-8 h-8 text-contrast m-auto mr-8" />
+        ) : (
+          <UserManager />
+        )}
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ type Props = {
 export default function LoadingCircle({ className }: Props) {
   return (
     <svg
-      className={`animate-spin ${className}`}
+      className={`animate-spin ${className ? className : ""}`}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
