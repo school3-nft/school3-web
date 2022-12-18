@@ -7,12 +7,14 @@ import {
 import Layout from "../../components/layout.component";
 import Overlay from "../../components/overlay.component";
 import Image from "next/image";
-import Link from "next/link";
 import Button from "../../components/button.component";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Circle from "../../components/loading-circle.component";
 import { useState } from "react";
 import AddTokenDialog from "../../components/add-token-dialog.component";
+import UserTokens from "../../components/userTokens.component";
+import { WalletData } from "../../utils/fetchers.util";
+import { User } from "../../utils/types.util";
 
 export async function getServerSideProps({ params: { username } }: any) {
   const profileUser = await getUserByUsername(username);
@@ -27,32 +29,25 @@ export async function getServerSideProps({ params: { username } }: any) {
 }
 
 type Props = {
-  profileUser: {
-    uid: string;
-    username: string;
-    avatar: string;
-    account_address_init: string;
-    account_balance_init: string;
-  };
+  profileUser: User;
 };
 
 export default function UserPage({ profileUser }: Props) {
-  const { uid, username, avatar, account_address_init, account_balance_init } =
+  const { uid, username, avatar, account_address, account_balance } =
     profileUser;
   const queryClient = useQueryClient();
+
   const {
     data,
     isFetching,
     isLoading: isWalletLoading,
-  } = useQuery(["wallet"], () => getWallet(uid));
+  } = useQuery<WalletData>(["wallet"], () => getWallet(uid));
 
   const mutate = useMutation(async () => await createAndAddWallet(uid), {
     onSuccess: () => {
       queryClient.invalidateQueries(["wallet"]);
     },
   });
-
-  const [isOpenDialog, setIsOpenDialog] = useState(false);
 
   const isLoading = isWalletLoading || isFetching || mutate.isLoading;
 
@@ -119,14 +114,8 @@ export default function UserPage({ profileUser }: Props) {
             )}
           </section>
           <section className="flex flex-col mt-4 items-center">
-            <Button className="px-8" onClick={() => setIsOpenDialog(true)}>
-              Add Token
-            </Button>
+            <UserTokens profileUser={profileUser} />
           </section>
-          <AddTokenDialog
-            isOpen={isOpenDialog}
-            close={() => setIsOpenDialog(false)}
-          />
         </Overlay>
       </Layout>
     </>
