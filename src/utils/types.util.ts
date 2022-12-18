@@ -13,6 +13,8 @@ export type User = {
   email: string;
   account_address: string;
   account_balance: string;
+  seed: string;
+  sequence: number;
   isAdmin: boolean;
 };
 
@@ -22,40 +24,45 @@ export type UserDoc = {
   email: string;
   account_address: string;
   account_balance: string;
+  seed: string;
+  sequence: number;
   isAdmin: boolean;
 };
 
 export type Token = {
-    token_id: string;
-    ipfs: string;
-    owner_id: string;
-    type: TokenType;
-    author: string;
-    description: string;
-}
+  token_id: string;
+  ipfs: string;
+  title: string;
+  uid: string;
+  type: TokenType;
+  author: string;
+  description: string;
+};
 
 export type TokenDoc = {
-    ipfs: string;
-    owner_id: string;
-    type: TokenType;
-    author: string;
-    description: string;
-}
+  ipfs: string;
+  uid: string;
+  type: TokenType;
+  author: string;
+  description: string;
+};
 
 export type Auction = {
-    auction_id: string;
-    currentBid: string;
-    token_id: string;
-    creationDate: Timestamp;
-    duration: Timestamp;
-}
+  auction_id: string;
+  uid: string;
+  token_id: string;
+  currentBid: string;
+  creationDate: Timestamp;
+  duration: Timestamp;
+};
 
 export type AuctionDoc = {
-    currentBid: string;
-    token_id: string;
-    creationDate: Timestamp;
-    duration: Timestamp;
-}
+  uid: string;
+  token_id: string;
+  currentBid: string;
+  creationDate: Timestamp;
+  duration: Timestamp;
+};
 
 export type Result<T> = {
   data: T;

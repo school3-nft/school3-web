@@ -20,9 +20,20 @@ import {
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
-import { SignState, User, UserDoc, UserSimple, Token, TokenDoc, Auction, AuctionDoc, TokenType } from "./types.util";
+import {
+  SignState,
+  User,
+  UserDoc,
+  UserSimple,
+  Token,
+  TokenDoc,
+  Auction,
+  AuctionDoc,
+  TokenType,
+} from "./types.util";
 import randUsername from "./rand-username.utils";
 import { fetchNewWallet } from "./fetchers.util";
+import { stringify } from "querystring";
 
 const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG!);
 
@@ -108,11 +119,13 @@ export const getUserById = async (uid: string) => {
 
 export const getWallet = async (uid: string) => {
   const docSnap = await getDoc(doc(db, "users", uid));
-  const { account_address, account_balance } = docSnap.data()!;
+  const { account_address, account_balance, seed, sequence } = docSnap.data()!;
   if (docSnap.exists())
-    return { account_address, account_balance } as {
+    return { account_address, account_balance, seed, sequence } as {
       account_address: string;
       account_balance: string;
+      sequence: number;
+      seed: string;
     };
   throw Error("No User with That Id");
 };
@@ -127,6 +140,8 @@ export const getUserByUsername = async (username: string) => {
     avatar: "",
     account_address: "",
     account_balance: "",
+    seed: "string",
+    sequence: -1,
     isAdmin: false,
   };
 
@@ -148,6 +163,8 @@ export const fireAddUserToDB = async (
     email: user.email,
     avatar: src ? src : user.photoURL,
     account_address: "",
+    seed: "",
+    sequence: -1,
     account_balance: "",
     isAdmin: false,
   } as UserDoc);
@@ -155,7 +172,7 @@ export const fireAddUserToDB = async (
 
 export const createAndAddWallet = async (uid: string) => {
   const {
-    data: { account_address, account_balance },
+    data: { account_address, account_balance, sequence, seed },
     returnCode,
   } = await fetchNewWallet();
   const docRef = doc(db, "users", uid);
@@ -164,6 +181,8 @@ export const createAndAddWallet = async (uid: string) => {
     await updateDoc(docRef, {
       account_address,
       account_balance,
+      seed,
+      sequence,
     });
   } else {
     throw Error("Wallet could not been created");
@@ -173,80 +192,72 @@ export const createAndAddWallet = async (uid: string) => {
 };
 
 export const createToken = async (
-    token_id: string,
-    ipfs: string,
-    owner_id: string,
-    type: TokenType,
-    author: string,
-    description: string,
+  token_id: string,
+  ipfs: string,
+  title: string,
+  uid: string,
+  type: TokenType,
+  author: string,
+  description: string
 ) => {
-    const docRef = await setDoc(doc(db, "tokens", token_id), {
-        ipfs: ipfs,
-        owner_id: owner_id,
-        type: type,
-        author: author,
-        description: description
-    } as TokenDoc);
+  const docRef = await setDoc(doc(db, "tokens", token_id), {
+    ipfs,
+    title,
+    uid,
+    type,
+    author,
+    description,
+  } as TokenDoc);
 };
 
 export const getTokenById = async (token_id: string) => {
-    const docSnap = await getDoc(doc(db, "tokens", token_id));
-    if (docSnap.exists()) return { token_id, ...(docSnap.data() as TokenDoc)};
-    throw Error("No Token with That Id");
-}
-export const getTokensByUid = async (uid: string) => {
-    const q = query(collection(db, "tokens"), where("uid", "==", uid));
-    const querySnapshot = await getDocs(q);
-    let token: Token = {
-        token_id: "",
-        ipfs: "",
-        owner_id: "",
-        type: "image",
-        author: "",
-        description: "",
-    }
-    querySnapshot.forEach((doc) => {
-        const token_id: string = doc.id;
-        token = { token_id, ...doc.data() } as Token;
-    });
+  const docSnap = await getDoc(doc(db, "tokens", token_id));
+  if (docSnap.exists()) return { token_id, ...(docSnap.data() as TokenDoc) };
+  throw Error("No Token with That Id");
+};
 
-    return token;
-}
+export const getTokensByUid = async (clientUid: string) => {
+  const q = query(collection(db, "tokens"), where("uid", "==", clientUid));
+  let tokens: Token[] = [];
+  const querySnapshot = await getDocs(q);
+
+  querySnapshot.forEach((doc) => {
+    const token_id: string = doc.id;
+    tokens.push({ token_id, ...doc.data() } as Token);
+  });
+
+  if (tokens) return tokens;
+  throw Error("Not any tokens with given Id");
+};
 
 export const createAuction = async (
-    auction_id: string,
-    token_id: string,
-    duration: Timestamp,
+  auction_id: string,
+  token_id: string,
+  duration: Timestamp
 ) => {
-    const docRef = await setDoc(doc(db, "auctions", auction_id), {
-        currentBid: "",
-        token_id: token_id,
-        creationDate: Timestamp.fromDate(new Date()),
-        duration: duration,
-    } as AuctionDoc);
+  const docRef = await setDoc(doc(db, "auctions", auction_id), {
+    currentBid: "",
+    token_id: token_id,
+    creationDate: Timestamp.fromDate(new Date()),
+    duration: duration,
+  } as AuctionDoc);
 };
 
 export const getAuctionById = async (auction_id: string) => {
-    const docSnap = await getDoc(doc(db, "auctions", auction_id));
-    if (docSnap.exists()) return { auction_id, ...(docSnap.data() as AuctionDoc)};
-    throw Error("No Auction with that Id");
-}
+  const docSnap = await getDoc(doc(db, "auctions", auction_id));
+  if (docSnap.exists())
+    return { auction_id, ...(docSnap.data() as AuctionDoc) };
+  throw Error("No Auction with that Id");
+};
 export const getAuctions = async () => {
-    const auctions: Auction[] = new Array();
-    const querySnapshot = await getDocs(collection(db, "auctions"));
-    let auction: Auction = {
-        auction_id: "",
-        currentBid: "",
-        token_id: "",
-        creationDate: Timestamp.fromDate(new Date("")),
-        duration: Timestamp.fromDate(new Date("")),
-    };
+  const auctions: Auction[] = [];
+  const querySnapshot = await getDocs(collection(db, "auctions"));
 
-    querySnapshot.forEach((doc) => {
-        const auction_id: string = doc.id;
-        auction = {auction_id, ...doc.data() } as Auction;
-        auctions.push(auction);
-    });
+  querySnapshot.forEach((doc) => {
+    const auction_id: string = doc.id;
+    const auction = { auction_id, ...doc.data() } as Auction;
+    auctions.push(auction);
+  });
 
-    return auctions;
-}
+  return auctions;
+};
