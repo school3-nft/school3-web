@@ -59,6 +59,15 @@ h6 {
   overflow-wrap: break-word;
 }
 
+h1 {
+  font-size: x-large;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: large;
+}
+
 #root,
 #__next {
   isolation: isolate;

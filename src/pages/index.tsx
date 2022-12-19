@@ -3,10 +3,17 @@ import Head from "next/head";
 import { useState } from "react";
 import AddAuctionBtn from "../components/add-auction-btn.component";
 import AddAuctionDialog from "../components/add-auction-dialog.component";
+import Auction from "../components/auction.component";
+import AuctionSearch from "../components/auctionSearch.component";
 import Layout from "../components/layout.component";
 import Overlay from "../components/overlay.component";
 import { useUser } from "../hooks/use-user.hook";
-import { getIsAdmin } from "../utils/firebase.util";
+import {
+  getAuctions,
+  getIsAdmin,
+  getTokensByUid,
+} from "../utils/firebase.util";
+import { Token } from "../utils/types.util";
 
 export default function Home() {
   const {
@@ -15,13 +22,18 @@ export default function Home() {
   } = useUser();
   const [isOpenDialog, setIsOpenDialog] = useState(false);
 
-  const { data } = useQuery({
+  const { data: isAdmin } = useQuery({
     queryKey: ["admin", uid],
     queryFn: () => getIsAdmin(uid),
     enabled: !!uid,
   });
 
-  const isAdmin = data && isLoggedIn;
+  const { data: auctions } = useQuery({
+    queryKey: ["auctions"],
+    queryFn: () => getAuctions(),
+  });
+
+  const isAdminAndLogged = isAdmin && isLoggedIn;
 
   const closeDialog = () => setIsOpenDialog(false);
 
@@ -35,12 +47,17 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <Overlay>
-          <p className="mt-12 w-fit mx-auto text-4xl font-mono">MAIN</p>
-          <>{!!isAdmin && <AddAuctionBtn openDialog={openDialog} />}</>
-          <AddAuctionDialog isOpen={isOpenDialog} close={closeDialog} />
+        <Overlay type="home">
+          <AuctionSearch />
+          <div className="grid place-content-center grid-cols-4 mx-16">
+            {auctions?.map((auction, idx) => (
+              <Auction key={idx} auction={auction} />
+            ))}
+          </div>
         </Overlay>
       </Layout>
+      <>{!!isAdminAndLogged && <AddAuctionBtn openDialog={openDialog} />}</>
+      <AddAuctionDialog isOpen={isOpenDialog} close={closeDialog} />
     </>
   );
 }

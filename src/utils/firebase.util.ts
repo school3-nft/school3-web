@@ -19,6 +19,7 @@ import {
   getDocs,
   updateDoc,
   Timestamp,
+  addDoc,
 } from "firebase/firestore";
 import {
   SignState,
@@ -212,7 +213,8 @@ export const createToken = async (
 
 export const getTokenById = async (token_id: string) => {
   const docSnap = await getDoc(doc(db, "tokens", token_id));
-  if (docSnap.exists()) return { token_id, ...(docSnap.data() as TokenDoc) };
+  if (docSnap.exists())
+    return { token_id, ...(docSnap.data() as TokenDoc) } as Token;
   throw Error("No Token with That Id");
 };
 
@@ -230,25 +232,29 @@ export const getTokensByUid = async (clientUid: string) => {
   throw Error("Not any tokens with given Id");
 };
 
-export const createAuction = async (
-  auction_id: string,
-  token_id: string,
-  duration: Timestamp
-) => {
-  const docRef = await setDoc(doc(db, "auctions", auction_id), {
-    currentBid: "",
+export const createAuction = async (token_id: string, endDate: string) => {
+  const docRef = await addDoc(collection(db, "auctions"), {
+    currentBid: -1,
     token_id: token_id,
     creationDate: Timestamp.fromDate(new Date()),
-    duration: duration,
+    endDate: Timestamp.fromDate(new Date(endDate)),
   } as AuctionDoc);
 };
 
 export const getAuctionById = async (auction_id: string) => {
   const docSnap = await getDoc(doc(db, "auctions", auction_id));
-  if (docSnap.exists())
-    return { auction_id, ...(docSnap.data() as AuctionDoc) };
+  const auctionTmp = { ...(docSnap.data() as AuctionDoc) } as AuctionDoc;
+  const auction = {
+    ...auctionTmp,
+    auction_id,
+    creationDate: auctionTmp.creationDate.toDate().toString(),
+    endDate: auctionTmp.endDate.toDate().toString(),
+  };
+
+  if (docSnap.exists()) return auction;
   throw Error("No Auction with that Id");
 };
+
 export const getAuctions = async () => {
   const auctions: Auction[] = [];
   const querySnapshot = await getDocs(collection(db, "auctions"));
@@ -260,4 +266,10 @@ export const getAuctions = async () => {
   });
 
   return auctions;
+};
+
+export const updateCurrentBid = async (auction_id: string, newBid: number) => {
+  const docRef = await updateDoc(doc(db, "auctions", auction_id), {
+    currentBid: newBid,
+  });
 };
