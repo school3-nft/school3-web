@@ -58,7 +58,7 @@ export default function UserPage({ profileUser }: Props) {
       </div>
       <div className="flex flex-col gap-6">
         <div>
-          <p className="text-xl text-primary">
+          <p className="text-xl text-primary-dark">
             Username:
             <span className="ml-4 text-lg text-black font-mono ">
               {username}
@@ -68,7 +68,7 @@ export default function UserPage({ profileUser }: Props) {
         {data?.account_address ? (
           <>
             <div>
-              <p className="text-xl text-primary">
+              <p className="text-xl text-primary-dark">
                 Account address:
                 <span className="ml-4 text-lg text-black font-mono ">
                   {data!.account_address}
@@ -76,7 +76,7 @@ export default function UserPage({ profileUser }: Props) {
               </p>
             </div>
             <div>
-              <p className="text-xl text-primary">
+              <p className="text-xl text-primary-dark">
                 Account balance:
                 <span className="ml-4 text-lg text-black font-mono ">
                   {data!.account_balance}

@@ -15,24 +15,20 @@ export default function TokenFC({ token }: Props) {
   const { token_id, ipfs, title, author } = token;
 
   return (
-    <div className="card flex gap-4">
+    <div className="card bg-secondary-dark flex gap-4">
       <Link href={ipfs} className="grid place-items-center w-32 h-32 relative">
         <Image className="rounded-full" src={ipfs} fill alt={ipfs} />
       </Link>
-      <section className="flex flex-col gap-3 p-2">
-        <h1 className="text-primary">
+      <section className="flex flex-col gap-2 p-2">
+        <h3 className="text-primary-dark">
           Hash<p className="text-black">{token_id}</p>
-        </h1>
-
-        <h1 className="text-primary">
+        </h3>
+        <h3 className="text-primary-dark">
           Title<p className="text-black">{title}</p>
-        </h1>
-        <h1 className="text-primary">
+        </h3>
+        <h3 className="text-primary-dark">
           Author<p className="text-black">{author}</p>
-        </h1>
-        <h1 className="text-primary">
-          Author<p className="text-black">{author}</p>
-        </h1>
+        </h3>
       </section>
     </div>
   );

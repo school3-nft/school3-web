@@ -36,9 +36,11 @@ export default function UserTokens({ profileUser }: Props) {
   return (
     <>
       <div className="flex flex-col gap-4 justify-center items-center">
-        <Button className="px-8 mb-4" onClick={() => setIsOpenDialog(true)}>
-          Add Token
-        </Button>
+        {canMintToken && (
+          <Button className="px-8 mb-4" onClick={() => setIsOpenDialog(true)}>
+            Add Token
+          </Button>
+        )}
         {!!tokens && (
           <div>
             {tokens!.map((token, idx) => (
