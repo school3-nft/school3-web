@@ -49,7 +49,7 @@ export default function Home() {
       <Layout>
         <Overlay type="home">
           <AuctionSearch />
-          <div className="grid place-content-center grid-cols-4 mx-16">
+          <div className="grid place-content-center grid-cols-4 gap-8 mx-16">
             {auctions?.map((auction, idx) => (
               <Auction key={idx} auction={auction} />
             ))}

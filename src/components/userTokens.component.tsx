@@ -42,7 +42,7 @@ export default function UserTokens({ profileUser }: Props) {
           </Button>
         )}
         {!!tokens && (
-          <div>
+          <div className="flex flex-col gap-8">
             {tokens!.map((token, idx) => (
               <TokenFC key={idx} token={token} />
             ))}

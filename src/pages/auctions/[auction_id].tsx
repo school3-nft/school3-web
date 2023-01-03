@@ -45,11 +45,10 @@ type Props = {
 };
 
 export default function AuctionPage({ auction, token }: Props) {
-  const [bid, setBid] = useState<number>(auction.currentBid);
+  const [bid, setBid] = useState<number>(auction.currentBid + 2);
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("XD");
     await updateCurrentBid(auction.auction_id, bid);
     location.reload();
   };

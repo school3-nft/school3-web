@@ -113,7 +113,7 @@ export default function UserPage({ profileUser }: Props) {
               <UserInfo />
             )}
           </section>
-          <section className="flex flex-col mt-4 items-center">
+          <section className="flex flex-col gap-4 mt-4 items-center">
             <UserTokens profileUser={profileUser} />
           </section>
         </Overlay>
