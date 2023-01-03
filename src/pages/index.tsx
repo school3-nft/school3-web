@@ -3,14 +3,16 @@ import Head from "next/head";
 import { useState } from "react";
 import AddAuctionBtn from "../components/add-auction-btn.component";
 import AddAuctionDialog from "../components/add-auction-dialog.component";
-import Auction from "../components/auction.component";
+import AuctionComponent from "../components/auction.component";
 import AuctionSearch from "../components/auctionSearch.component";
 import Layout from "../components/layout.component";
 import Overlay from "../components/overlay.component";
 import { useUser } from "../hooks/use-user.hook";
+import { Auction } from "../utils/types.util";
 import {
   getAuctions,
   getIsAdmin,
+  getTokenById,
   getTokensByUid,
 } from "../utils/firebase.util";
 import { Token } from "../utils/types.util";
@@ -21,6 +23,9 @@ export default function Home() {
     isLoggedIn,
   } = useUser();
   const [isOpenDialog, setIsOpenDialog] = useState(false);
+
+//   const [filtered_auctions, setFilteredAuctions] = useState<Auction[]>([]);
+  const [searchTitle, setSearchTitled] = useState<string>("");
 
   const { data: isAdmin } = useQuery({
     queryKey: ["admin", uid],
@@ -33,11 +38,26 @@ export default function Home() {
     queryFn: () => getAuctions(),
   });
 
+  const SearchTokenHandler = (tokenTitle: string) => {
+    setSearchTitled(tokenTitle)
+  }
+
   const isAdminAndLogged = isAdmin && isLoggedIn;
 
   const closeDialog = () => setIsOpenDialog(false);
 
   const openDialog = () => setIsOpenDialog(true);
+
+  const filteredAuctions: Auction[] | undefined = auctions?.filter( async (auction) => (await getTokenById(auction.token_id)).title.toLowerCase().includes(searchTitle.toLowerCase()));
+
+    auctions?.forEach(async (auction) => {
+    const token = await getTokenById(auction.token_id);
+    if (token.title.toLowerCase().includes(searchTitle.toLowerCase())) {
+      console.log(`${token.title} should be included in filteredAuctions`);
+    } else {
+      console.log(`${token.title} should NOT be included in filteredAuctions`);
+    }
+  });
 
   return (
     <>
@@ -48,10 +68,13 @@ export default function Home() {
       </Head>
       <Layout>
         <Overlay type="home">
-          <AuctionSearch />
+          <AuctionSearch onSearchFilter={SearchTokenHandler}/>
           <div className="grid place-content-center grid-cols-4 gap-8 mx-16">
-            {auctions?.map((auction, idx) => (
-              <Auction key={idx} auction={auction} />
+            {/* {auctions?.filter(async auction => (await getTokenById(auction.token_id)).title === searchTitle).map((auction, idx) => (
+              <AuctionComponent key={idx} auction={auction} />
+            ))} */}
+            {filteredAuctions?.map((auction, idx) => (
+              <AuctionComponent key={idx} auction={auction} />
             ))}
           </div>
         </Overlay>
