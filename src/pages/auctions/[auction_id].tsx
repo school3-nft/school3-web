@@ -3,6 +3,7 @@ import {
   createAndAddWallet,
   getAuctionById,
   getTokenById,
+  getUserById,
   getUserByUsername,
   getWallet,
   updateCurrentBid,
@@ -13,21 +14,31 @@ import Image from "next/image";
 import Button from "../../components/button.component";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Circle from "../../components/loading-circle.component";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import AddTokenDialog from "../../components/add-token-dialog.component";
 import UserTokens from "../../components/userTokens.component";
 import { WalletData } from "../../utils/fetchers.util";
 import { Auction, Token, User } from "../../utils/types.util";
 import Link from "next/link";
+import { UserContext } from "../../contexts/user.context";
 
 export async function getServerSideProps({ params: { auction_id } }: any) {
   const auction = await getAuctionById(auction_id);
   const token = await getTokenById(auction.token_id);
+  let username = "None";
+  let avatar = "";
+
+  if (auction.currentBidderUid !== "") {
+    const currentBidder = await getUserById(auction.currentBidderUid);
+    username = currentBidder.username;
+    avatar = currentBidder.avatar;
+  }
 
   return {
     props: {
       auction,
       token,
+      currentBidder: { username, avatar },
     },
   };
 }
@@ -42,14 +53,24 @@ type Props = {
     currentBid: number;
   };
   token: Token;
+  currentBidder: {
+    username: string;
+    avatar: string;
+  };
 };
 
-export default function AuctionPage({ auction, token }: Props) {
+export default function AuctionPage({
+  auction,
+  token,
+  currentBidder: { username },
+}: Props) {
   const [bid, setBid] = useState<number>(auction.currentBid + 2);
-
+  const {
+    user: { uid: clientUid },
+  } = useContext(UserContext);
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await updateCurrentBid(auction.auction_id, bid);
+    await updateCurrentBid(clientUid, auction.auction_id, bid);
     location.reload();
   };
 
@@ -93,12 +114,18 @@ export default function AuctionPage({ auction, token }: Props) {
                 />
                 <Button type="submit">Place Bid</Button>
               </form>
-              <h3 className="text-primary-dark">
-                Auction ends:
-                <div className="text-black">
-                  {formatter.format(new Date(auction.endDate))}
-                </div>
-              </h3>
+              <div className="flex justify-between items-center">
+                <h3 className="text-primary-dark">
+                  Auction ends:
+                  <p className="text-black">
+                    {formatter.format(new Date(auction.endDate))}
+                  </p>
+                </h3>
+                <h3 className="text-primary-dark text-md">
+                  Bidder:
+                  <p className="text-black">{username}</p>
+                </h3>
+              </div>
             </div>
           </section>
         </div>

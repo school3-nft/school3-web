@@ -213,8 +213,9 @@ export const createToken = async (
 
 export const getTokenById = async (token_id: string) => {
   const docSnap = await getDoc(doc(db, "tokens", token_id));
-  if (docSnap.exists())
+  if (docSnap.exists()) {
     return { token_id, ...(docSnap.data() as TokenDoc) } as Token;
+  }
   throw Error("No Token with That Id");
 };
 
@@ -233,10 +234,13 @@ export const getTokensByUid = async (clientUid: string) => {
 };
 
 export const createAuction = async (token_id: string, endDate: string) => {
+  const { title } = await getTokenById(token_id);
   const docRef = await addDoc(collection(db, "auctions"), {
     currentBid: -1,
-    token_id: token_id,
+    title,
+    token_id,
     creationDate: Timestamp.fromDate(new Date()),
+    currentBidderUid: "",
     endDate: Timestamp.fromDate(new Date(endDate)),
   } as AuctionDoc);
 };
@@ -255,6 +259,20 @@ export const getAuctionById = async (auction_id: string) => {
   throw Error("No Auction with that Id");
 };
 
+export const getTokensByTitle = async (tokenName: string) => {
+  const q = query(collection(db, "tokens"), where("title", "==", tokenName));
+  let tokens: Token[] = [];
+  const querySnapshot = await getDocs(q);
+
+  querySnapshot.forEach((doc) => {
+    const token_id: string = doc.id;
+    tokens.push({ token_id, ...doc.data() } as Token);
+  });
+
+  if (tokens) return tokens;
+  throw Error("Not any tokens with given title");
+};
+
 export const getAuctions = async () => {
   const auctions: Auction[] = [];
   const querySnapshot = await getDocs(collection(db, "auctions"));
@@ -268,8 +286,13 @@ export const getAuctions = async () => {
   return auctions;
 };
 
-export const updateCurrentBid = async (auction_id: string, newBid: number) => {
+export const updateCurrentBid = async (
+  uid: string,
+  auction_id: string,
+  newBid: number
+) => {
   const docRef = await updateDoc(doc(db, "auctions", auction_id), {
     currentBid: newBid,
+    currentBidderUid: uid,
   });
 };
