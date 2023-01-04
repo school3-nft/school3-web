@@ -52,6 +52,7 @@ export type Auction = {
   uid: string;
   token_id: string;
   currentBid: number;
+  currentBidderUid: string;
   creationDate: Timestamp;
   endDate: Timestamp;
 };
@@ -60,6 +61,7 @@ export type AuctionDoc = {
   uid: string;
   token_id: string;
   currentBid: number;
+  currentBidderUid: string;
   creationDate: Timestamp;
   endDate: Timestamp;
 };

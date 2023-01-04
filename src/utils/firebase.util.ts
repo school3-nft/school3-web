@@ -237,6 +237,7 @@ export const createAuction = async (token_id: string, endDate: string) => {
     currentBid: -1,
     token_id: token_id,
     creationDate: Timestamp.fromDate(new Date()),
+    currentBidderUid: "",
     endDate: Timestamp.fromDate(new Date(endDate)),
   } as AuctionDoc);
 };
@@ -268,8 +269,13 @@ export const getAuctions = async () => {
   return auctions;
 };
 
-export const updateCurrentBid = async (auction_id: string, newBid: number) => {
+export const updateCurrentBid = async (
+  uid: string,
+  auction_id: string,
+  newBid: number
+) => {
   const docRef = await updateDoc(doc(db, "auctions", auction_id), {
     currentBid: newBid,
+    currentBidderUid: uid,
   });
 };
