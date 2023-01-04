@@ -2,7 +2,7 @@ import { Result } from "./types.util";
 
 const API_URL = process.env.API_URL
   ? process.env.API_URL
-  : "https://school3.kklassa.dev/api/";
+  : "https://school3.kklassa.dev/api";
 
 export type WalletData = {
   account_address: string;
