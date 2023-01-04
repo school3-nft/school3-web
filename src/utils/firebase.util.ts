@@ -36,7 +36,7 @@ import randUsername from "./rand-username.utils";
 import { fetchNewWallet } from "./fetchers.util";
 import { stringify } from "querystring";
 
-const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG!);
+const firebaseConfig = JSON.parse(`{\"apiKey\": "AIzaSyD_KCv34goL6IWFXOGJdqxl7Oi8NolNvdo",\"authDomain\": \"school3-c6e3b.firebaseapp.com\",\"projectId\": \"school3-c6e3b\",\"storageBucket\": \"school3-c6e3b.appspot.com\",\"messagingSenderId\": \"966798360259\",\"appId\": \"1:966798360259:web:b4dd662d7fa51873532c76\",\"measurementId\": \"G-PGZRW49D8D\"}`);
 
 const profile_default =
   "https://firebasestorage.googleapis.com/v0/b/school3-c6e3b.appspot.com/o/images%2Fstudent.png?alt=media&token=007e4d20-42ac-4c30-9b28-baf1e6eff5e0";
