@@ -213,8 +213,8 @@ export const createToken = async (
 
 export const getTokenById = async (token_id: string) => {
   const docSnap = await getDoc(doc(db, "tokens", token_id));
-  if (docSnap.exists()){
-      return { token_id, ...(docSnap.data() as TokenDoc) } as Token;
+  if (docSnap.exists()) {
+    return { token_id, ...(docSnap.data() as TokenDoc) } as Token;
   }
   throw Error("No Token with That Id");
 };
@@ -234,9 +234,11 @@ export const getTokensByUid = async (clientUid: string) => {
 };
 
 export const createAuction = async (token_id: string, endDate: string) => {
+  const { title } = await getTokenById(token_id);
   const docRef = await addDoc(collection(db, "auctions"), {
     currentBid: -1,
-    token_id: token_id,
+    title,
+    token_id,
     creationDate: Timestamp.fromDate(new Date()),
     currentBidderUid: "",
     endDate: Timestamp.fromDate(new Date(endDate)),
@@ -258,18 +260,18 @@ export const getAuctionById = async (auction_id: string) => {
 };
 
 export const getTokensByTitle = async (tokenName: string) => {
-    const q = query(collection(db, "tokens"), where("title", "==", tokenName));
-    let tokens: Token[] = [];
-    const querySnapshot = await getDocs(q);
+  const q = query(collection(db, "tokens"), where("title", "==", tokenName));
+  let tokens: Token[] = [];
+  const querySnapshot = await getDocs(q);
 
-    querySnapshot.forEach((doc) => {
-        const token_id: string = doc.id;
-        tokens.push({ token_id, ...doc.data() } as Token);
-    });
+  querySnapshot.forEach((doc) => {
+    const token_id: string = doc.id;
+    tokens.push({ token_id, ...doc.data() } as Token);
+  });
 
-    if ( tokens ) return tokens;
-    throw Error("Not any tokens with given title");
-}
+  if (tokens) return tokens;
+  throw Error("Not any tokens with given title");
+};
 
 export const getAuctions = async () => {
   const auctions: Auction[] = [];

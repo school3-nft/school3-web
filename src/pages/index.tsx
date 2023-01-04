@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddAuctionBtn from "../components/add-auction-btn.component";
 import AddAuctionDialog from "../components/add-auction-dialog.component";
 import AuctionComponent from "../components/auction.component";
@@ -24,7 +24,6 @@ export default function Home() {
   } = useUser();
   const [isOpenDialog, setIsOpenDialog] = useState(false);
 
-//   const [filtered_auctions, setFilteredAuctions] = useState<Auction[]>([]);
   const [searchTitle, setSearchTitled] = useState<string>("");
 
   const { data: isAdmin } = useQuery({
@@ -39,8 +38,8 @@ export default function Home() {
   });
 
   const SearchTokenHandler = (tokenTitle: string) => {
-    setSearchTitled(tokenTitle)
-  }
+    setSearchTitled(tokenTitle);
+  };
 
   const isAdminAndLogged = isAdmin && isLoggedIn;
 
@@ -48,16 +47,11 @@ export default function Home() {
 
   const openDialog = () => setIsOpenDialog(true);
 
-  const filteredAuctions: Auction[] | undefined = auctions?.filter( async (auction) => (await getTokenById(auction.token_id)).title.toLowerCase().includes(searchTitle.toLowerCase()));
-
-    auctions?.forEach(async (auction) => {
-    const token = await getTokenById(auction.token_id);
-    if (token.title.toLowerCase().includes(searchTitle.toLowerCase())) {
-      console.log(`${token.title} should be included in filteredAuctions`);
-    } else {
-      console.log(`${token.title} should NOT be included in filteredAuctions`);
+  const filteredAuctions: Auction[] | undefined = auctions?.filter(
+    (auction) => {
+      return auction.title.toLowerCase().includes(searchTitle.toLowerCase());
     }
-  });
+  );
 
   return (
     <>
@@ -68,11 +62,8 @@ export default function Home() {
       </Head>
       <Layout>
         <Overlay type="home">
-          <AuctionSearch onSearchFilter={SearchTokenHandler}/>
+          <AuctionSearch onSearchFilter={SearchTokenHandler} />
           <div className="grid place-content-center grid-cols-4 gap-8 mx-16">
-            {/* {auctions?.filter(async auction => (await getTokenById(auction.token_id)).title === searchTitle).map((auction, idx) => (
-              <AuctionComponent key={idx} auction={auction} />
-            ))} */}
             {filteredAuctions?.map((auction, idx) => (
               <AuctionComponent key={idx} auction={auction} />
             ))}

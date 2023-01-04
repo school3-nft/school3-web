@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { TokenType } from "../utils/types.util";
 
-type Props = {onSearchFilter: (tokenTitle: string) => void};
+type Props = { onSearchFilter: (tokenTitle: string) => void };
 
-export default function AuctionSearch({onSearchFilter}: Props) {
+export default function AuctionSearch({ onSearchFilter }: Props) {
   const [search, setSearch] = useState<string>("");
   const [tokenType, setTokenType] = useState<TokenType | "all">("text");
 
@@ -16,12 +16,10 @@ export default function AuctionSearch({onSearchFilter}: Props) {
           placeholder="search"
           name="search"
           value={search}
-          onChange={
-            (e) => {
-                setSearch(e.target.value)
-                onSearchFilter(e.target.value)
-            }
-        }
+          onChange={(e) => {
+            setSearch(e.target.value);
+            onSearchFilter(e.target.value);
+          }}
         />
       </label>
       <div className="grid grid-rows-2 grid-cols-3 place-items-center gap-2">
