@@ -26,6 +26,8 @@ export default function Home() {
 
   const [searchTitle, setSearchTitled] = useState<string>("");
 
+  const [chooseType, setChooseType ] = useState<string>("all");
+
   const { data: isAdmin } = useQuery({
     queryKey: ["admin", uid],
     queryFn: () => getIsAdmin(uid),
@@ -41,13 +43,23 @@ export default function Home() {
     setSearchTitled(tokenTitle);
   };
 
+  const ChooseTokenTypeHandler = (tokenType: string) => {
+    setChooseType(tokenType);
+  }
+
   const isAdminAndLogged = isAdmin && isLoggedIn;
 
   const closeDialog = () => setIsOpenDialog(false);
 
   const openDialog = () => setIsOpenDialog(true);
 
-  const filteredAuctions: Auction[] | undefined = auctions?.filter(
+  const filteredAuctionsbyType: Auction[] | undefined = auctions?.filter(
+    (auction) => {
+        return auction.type === chooseType || chooseType === "all";
+    }
+  )
+
+  const filteredAuctions: Auction[] | undefined = filteredAuctionsbyType?.filter(
     (auction) => {
       return auction.title.toLowerCase().includes(searchTitle.toLowerCase());
     }
@@ -62,7 +74,7 @@ export default function Home() {
       </Head>
       <Layout>
         <Overlay type="home">
-          <AuctionSearch onSearchFilter={SearchTokenHandler} />
+          <AuctionSearch onSearchFilter={SearchTokenHandler} onTypeFilter={ChooseTokenTypeHandler}/>
           <div className="grid place-content-center grid-cols-4 gap-8 mx-16">
             {filteredAuctions?.map((auction, idx) => (
               <AuctionComponent key={idx} auction={auction} />
