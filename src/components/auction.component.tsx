@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getTokenById, getTokensByUid } from "../utils/firebase.util";
 import { Auction, Token } from "../utils/types.util";
+import AuctionImage from "./auction-image.component";
 
 type Props = {
   auction: Auction;
@@ -24,12 +25,7 @@ export default function AuctionPreview({ auction }: Props) {
         <Link href={`/auctions/${auction_id}`}>
           <div className="card bg-secondary-dark flex flex-col items-center justify-center gap-4">
             <div className="grid place-items-center w-32 h-32 relative">
-              <Image
-                className="rounded-xl"
-                src={token!.ipfs}
-                fill
-                alt={token!.ipfs}
-              />
+              <AuctionImage token={token} />
             </div>
             <section className="">
               <h1 className="text-primary-dark">{token!.title}</h1>
