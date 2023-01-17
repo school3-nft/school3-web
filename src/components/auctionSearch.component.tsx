@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { TokenType } from "../utils/types.util";
 
-type Props = { onSearchFilter: (tokenTitle: string) => void };
+type Props = {
+    onSearchFilter: (tokenTitle: string) => void;
+    onTypeFilter: (tokenType: string) => void
+};
 
-export default function AuctionSearch({ onSearchFilter }: Props) {
+export default function AuctionSearch({ onSearchFilter, onTypeFilter }: Props) {
   const [search, setSearch] = useState<string>("");
-  const [tokenType, setTokenType] = useState<TokenType | "all">("text");
+  const [tokenType, setTokenType] = useState<TokenType | "all">("all");
 
   return (
     <section className="card border-secondary border-2 flex flex-col gap-4">
@@ -29,7 +32,11 @@ export default function AuctionSearch({ onSearchFilter }: Props) {
             type="radio"
             value="text"
             checked={tokenType === "text"}
-            onChange={() => setTokenType("text")}
+            onChange={() => {
+                    setTokenType("text");
+                    onTypeFilter("text");
+                }
+            }
           />
         </label>
 
@@ -39,7 +46,11 @@ export default function AuctionSearch({ onSearchFilter }: Props) {
             type="radio"
             value="sound"
             checked={tokenType === "sound"}
-            onChange={() => setTokenType("sound")}
+            onChange={() => {
+                setTokenType("sound");
+                onTypeFilter("sound");
+            }
+        }
           />
         </label>
 
@@ -49,7 +60,11 @@ export default function AuctionSearch({ onSearchFilter }: Props) {
             type="radio"
             value="option1"
             checked={tokenType === "image"}
-            onChange={() => setTokenType("image")}
+            onChange={() => {
+                setTokenType("image");
+                onTypeFilter("image");
+            }
+        }
           />
         </label>
         <label className="flex gap-1 col-span-3 ">
@@ -58,7 +73,11 @@ export default function AuctionSearch({ onSearchFilter }: Props) {
             type="radio"
             value="all"
             checked={tokenType === "all"}
-            onChange={() => setTokenType("all")}
+            onChange={() => {
+                setTokenType("all");
+                onTypeFilter("all");
+            }
+        }
           />
         </label>
       </div>

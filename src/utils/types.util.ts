@@ -52,6 +52,7 @@ export type Auction = {
   uid: string;
   title: string;
   token_id: string;
+  type: TokenType;
   currentBid: number;
   currentBidderUid: string;
   creationDate: Timestamp;
@@ -62,6 +63,7 @@ export type AuctionDoc = {
   uid: string;
   title: string;
   token_id: string;
+  type: TokenType;
   currentBid: number;
   currentBidderUid: string;
   creationDate: Timestamp;

@@ -234,11 +234,12 @@ export const getTokensByUid = async (clientUid: string) => {
 };
 
 export const createAuction = async (token_id: string, endDate: string) => {
-  const { title } = await getTokenById(token_id);
+  const { title, type } = await getTokenById(token_id);
   const docRef = await addDoc(collection(db, "auctions"), {
     currentBid: -1,
     title,
     token_id,
+    type,
     creationDate: Timestamp.fromDate(new Date()),
     currentBidderUid: "",
     endDate: Timestamp.fromDate(new Date(endDate)),
