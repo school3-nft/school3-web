@@ -6,6 +6,7 @@ import { getTokensByUid } from "../utils/firebase.util";
 import { Token } from "../utils/types.util";
 import AddTokenDialog from "./add-token-dialog.component";
 import Button from "./button.component";
+import AuctionImage from "./auction-image.component";
 
 type Props = {
   token: Token;
@@ -17,7 +18,7 @@ export default function TokenFC({ token }: Props) {
   return (
     <div className="card bg-secondary-dark flex gap-4">
       <Link href={ipfs} className="grid place-items-center w-32 h-32 relative">
-        <Image className="rounded-full" src={ipfs} fill alt={ipfs} />
+        <AuctionImage token={token} />
       </Link>
       <section className="flex flex-col gap-2 p-2">
         <h3 className="text-primary-dark">

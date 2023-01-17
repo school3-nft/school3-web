@@ -21,6 +21,7 @@ import { WalletData } from "../../utils/fetchers.util";
 import { Auction, Token, User } from "../../utils/types.util";
 import Link from "next/link";
 import { UserContext } from "../../contexts/user.context";
+import AuctionImage from "../../components/auction-image.component";
 
 export async function getServerSideProps({ params: { auction_id } }: any) {
   const auction = await getAuctionById(auction_id);
@@ -88,12 +89,7 @@ export default function AuctionPage({
               href={token.ipfs}
               className="grid w-72 h-72 relative shadow-lg"
             >
-              <Image
-                className="rounded-xl"
-                src={token.ipfs}
-                fill
-                alt={token.ipfs}
-              />
+              <AuctionImage token={token} />
             </Link>
             <div className="card shadow-lg rounded-none w-[350px] bg-newGray flex flex-col justify-between py-6 px-12">
               <h1>{token.title}</h1>
