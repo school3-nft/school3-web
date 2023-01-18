@@ -14,7 +14,7 @@ import Image from "next/image";
 import Button from "../../components/button.component";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Circle from "../../components/loading-circle.component";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AddTokenDialog from "../../components/add-token-dialog.component";
 import UserTokens from "../../components/userTokens.component";
 import { WalletData } from "../../utils/fetchers.util";
@@ -67,6 +67,7 @@ export default function AuctionPage({
   currentBidder: { username, avatar },
 }: Props) {
   const [bid, setBid] = useState<number>(auction.currentBid + 2);
+//   const [isAuctionAvailable, setIsAuctionAvailable] = useState<boolean>(true);
   const {
     user: { uid: clientUid },
   } = useContext(UserContext);
@@ -85,6 +86,16 @@ export default function AuctionPage({
     queryKey: ["users"],
     queryFn: () => getUserById(token.uid),
   });
+
+//   useEffect(() => {
+//     const current = new Date();
+//     const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
+//     console.log(date);
+//     // console.log(formatter.format(new Date(auction.endDate)));
+//     if ( date > formatter.format(new Date(auction.endDate))) setIsAuctionAvailable(false);
+//   }, [auction.endDate, formatter])
+
+//   console.log(isAuctionAvailable);
 
   return (
     <Layout>
@@ -105,7 +116,7 @@ export default function AuctionPage({
                   {auction.currentBid !== -1 ? auction.currentBid : "None"}
                 </span>
               </h3>
-              <form onSubmit={onSubmit} className="flex gap-4">
+              { formatter.format(new Date()) > formatter.format(new Date(auction.endDate)) && <form onSubmit={onSubmit} className="flex gap-4">
                 <input
                   className="w-24 p-2"
                   value={bid}
@@ -114,7 +125,7 @@ export default function AuctionPage({
                   onChange={(e) => setBid(parseInt(e.target.value))}
                 />
                 <Button type="submit">Place Bid</Button>
-              </form>
+              </form>}
                 <h3 className="text-primary-dark text-center">
                     Auction ends:
                     <p className="text-black">
