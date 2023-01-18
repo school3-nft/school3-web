@@ -10,15 +10,15 @@ import Image from "next/image";
 import Button from "../../components/button.component";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Circle from "../../components/loading-circle.component";
-import { useState } from "react";
-import AddTokenDialog from "../../components/add-token-dialog.component";
+import { useContext, useEffect, useState } from "react";
 import UserTokens from "../../components/userTokens.component";
 import { WalletData } from "../../utils/fetchers.util";
 import { User } from "../../utils/types.util";
+import { UserContext } from "../../contexts/user.context";
+import { useRouter } from "next/router";
 
 export async function getServerSideProps({ params: { username } }: any) {
   const profileUser = await getUserByUsername(username);
-
   const { uid, avatar, account_address, account_balance } = profileUser;
 
   return {
@@ -38,6 +38,12 @@ export default function UserPage({ profileUser }: Props) {
   const queryClient = useQueryClient();
 
   const {
+    user: { uid: uidClient, username: usernameClient },
+  } = useContext(UserContext);
+
+  const router = useRouter();
+
+  const {
     data,
     isFetching,
     isLoading: isWalletLoading,
@@ -49,7 +55,39 @@ export default function UserPage({ profileUser }: Props) {
     },
   });
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
   const isLoading = isWalletLoading || isFetching || mutate.isLoading;
+
+  const UserPreview = () => (
+    <div className="w-full flex gap-8">
+      <div className="w-32 h-32 relative">
+        <Image src={avatar!} alt="avatar" fill />
+      </div>
+      <div className="flex flex-col gap-6">
+        <div>
+          <p className="text-xl text-primary-dark">
+            Username:
+            <span className="ml-4 text-lg text-black font-mono ">
+              {username}
+            </span>
+          </p>
+        </div>
+        <div>
+          {!!data?.account_address && (
+            <p className="text-xl text-primary-dark">
+              Account address:
+              <span className="ml-4 text-lg text-black font-mono ">
+                {data!.account_address}
+              </span>
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
   const UserInfo = () => (
     <div className="w-full flex gap-8">
@@ -75,14 +113,16 @@ export default function UserPage({ profileUser }: Props) {
                 </span>
               </p>
             </div>
-            <div>
-              <p className="text-xl text-primary-dark">
-                Account balance:
-                <span className="ml-4 text-lg text-black font-mono ">
-                  {data!.account_balance}
-                </span>
-              </p>
-            </div>
+            {usernameClient === username && (
+              <div>
+                <p className="text-xl text-primary-dark">
+                  Account balance:
+                  <span className="ml-4 text-lg text-black font-mono ">
+                    {data!.account_balance}
+                  </span>
+                </p>
+              </div>
+            )}
           </>
         ) : (
           <div className="h-full grid place-content-center">
@@ -109,11 +149,13 @@ export default function UserPage({ profileUser }: Props) {
               <div className="h-full grid place-items-center">
                 <Circle className="text-contrast h-16 w-16" />
               </div>
-            ) : (
+            ) : usernameClient === username ? (
               <UserInfo />
+            ) : (
+              <UserPreview />
             )}
           </section>
-          <section className="flex flex-col gap-4 mt-4 items-center">
+          <section className="flex flex-col gap-4 mt-4 items-center mb-8">
             <UserTokens profileUser={profileUser} />
           </section>
         </Overlay>

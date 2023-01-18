@@ -27,10 +27,13 @@ export default function UserTokens({ profileUser }: Props) {
   } = useQuery([uid, "tokens"], () => getTokensByUid(uid));
 
   useEffect(() => {
-    if (clientUid !== "loading")
+    if (clientUid !== "loading") {
+      if (clientUid === "") return;
+
       getIsAdmin(clientUid).then((result) =>
         setCanMintToken(uid === clientUid && result)
       );
+    }
   }, [clientUid]);
 
   return (
