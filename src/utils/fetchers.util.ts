@@ -16,6 +16,7 @@ export type TokenData = {
   fee: number;
   uri: string;
   hash: string;
+  nftoken_id: string;
 };
 
 function fetchApi<T>(
@@ -23,7 +24,6 @@ function fetchApi<T>(
   method: "GET" | "POST",
   body?: any
 ): Promise<T> {
-  console.log(JSON.stringify(body));
   return fetch(url, {
     method,
     headers: {
@@ -56,5 +56,6 @@ export const fetchMintToken = async (
     uri: ipfs,
     transfer_fee: transferFee,
   });
+  console.log(data);
   return { data, returnCode: "200" } as Result<TokenData>;
 };

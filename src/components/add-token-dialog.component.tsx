@@ -33,12 +33,13 @@ export default function AddTokenDialog({ isOpen, close, profileUser }: Props) {
       const { data: token } = await fetchMintToken(seed, sequence, ipfs, 0);
       await createToken(
         token.hash,
-        token.uri,
+        ipfs,
         title,
         uid,
         tokenType,
         author,
-        description
+        description,
+        token.nftoken_id
       );
     },
     {

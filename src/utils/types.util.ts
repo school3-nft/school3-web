@@ -37,6 +37,7 @@ export type Token = {
   type: TokenType;
   author: string;
   description: string;
+  nftoken_id: string;
 };
 
 export type TokenDoc = {
@@ -45,6 +46,7 @@ export type TokenDoc = {
   type: TokenType;
   author: string;
   description: string;
+  nftoken_id: string;
 };
 
 export type Auction = {

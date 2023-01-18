@@ -91,10 +91,10 @@ export default function AuctionPage({
     <Layout>
       <Overlay>
         <div className="grid w-full h-full place-items-center mt-[-100px]">
-          <section className="flex justify-between w-[70%] h-72">
+          <section className="flex justify-between w-[80%] h-72">
             <Link
               href={token.ipfs}
-              className="grid w-72 h-72 relative shadow-lg"
+              className="grid place-items-center w-72 h-72 relative shadow-lg"
             >
               <AuctionImage token={token} />
             </Link>

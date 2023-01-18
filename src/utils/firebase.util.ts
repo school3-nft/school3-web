@@ -199,7 +199,8 @@ export const createToken = async (
   uid: string,
   type: TokenType,
   author: string,
-  description: string
+  description: string,
+  nftoken_id: string
 ) => {
   const docRef = await setDoc(doc(db, "tokens", token_id), {
     ipfs,
@@ -208,6 +209,7 @@ export const createToken = async (
     type,
     author,
     description,
+    nftoken_id,
   } as TokenDoc);
 };
 
