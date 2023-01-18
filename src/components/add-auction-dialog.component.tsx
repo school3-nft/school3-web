@@ -12,7 +12,7 @@ export default function AddAuctionDialog({ isOpen, close }: Props) {
   const [auction, setAuction] = useState<{ tokenId: string }>({ tokenId: "" });
 
   const [hash, setHash] = useState<string>("");
-  const [date, setDate] = useState<string>("2022-12-20T00:00");
+  const [date, setDate] = useState<string>("2023-01-18T00:00");
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
