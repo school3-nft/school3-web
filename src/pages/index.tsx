@@ -15,7 +15,6 @@ import {
   getTokenById,
   getTokensByUid,
 } from "../utils/firebase.util";
-import { Token } from "../utils/types.util";
 
 export default function Home() {
   const {
@@ -26,7 +25,7 @@ export default function Home() {
 
   const [searchTitle, setSearchTitled] = useState<string>("");
 
-  const [chooseType, setChooseType ] = useState<string>("all");
+  const [chooseType, setChooseType] = useState<string>("all");
 
   const { data: isAdmin } = useQuery({
     queryKey: ["admin", uid],
@@ -45,7 +44,7 @@ export default function Home() {
 
   const ChooseTokenTypeHandler = (tokenType: string) => {
     setChooseType(tokenType);
-  }
+  };
 
   const isAdminAndLogged = isAdmin && isLoggedIn;
 
@@ -55,15 +54,14 @@ export default function Home() {
 
   const filteredAuctionsbyType: Auction[] | undefined = auctions?.filter(
     (auction) => {
-        return auction.type === chooseType || chooseType === "all";
-    }
-  )
-
-  const filteredAuctions: Auction[] | undefined = filteredAuctionsbyType?.filter(
-    (auction) => {
-      return auction.title.toLowerCase().includes(searchTitle.toLowerCase());
+      return auction.type === chooseType || chooseType === "all";
     }
   );
+
+  const filteredAuctions: Auction[] | undefined =
+    filteredAuctionsbyType?.filter((auction) => {
+      return auction.title.toLowerCase().includes(searchTitle.toLowerCase());
+    });
 
   return (
     <>
@@ -74,7 +72,10 @@ export default function Home() {
       </Head>
       <Layout>
         <Overlay type="home">
-          <AuctionSearch onSearchFilter={SearchTokenHandler} onTypeFilter={ChooseTokenTypeHandler}/>
+          <AuctionSearch
+            onSearchFilter={SearchTokenHandler}
+            onTypeFilter={ChooseTokenTypeHandler}
+          />
           <div className="grid place-content-center grid-cols-4 gap-8 mx-16">
             {filteredAuctions?.map((auction, idx) => (
               <AuctionComponent key={idx} auction={auction} />
