@@ -67,7 +67,7 @@ export default function AuctionPage({
   currentBidder: { username, avatar },
 }: Props) {
   const [bid, setBid] = useState<number>(auction.currentBid + 2);
-//   const [isAuctionAvailable, setIsAuctionAvailable] = useState<boolean>(true);
+
   const {
     user: { uid: clientUid },
   } = useContext(UserContext);
@@ -86,16 +86,6 @@ export default function AuctionPage({
     queryKey: ["users"],
     queryFn: () => getUserById(token.uid),
   });
-
-//   useEffect(() => {
-//     const current = new Date();
-//     const date = `${current.getDate()}/${current.getMonth()+1}/${current.getFullYear()}`;
-//     console.log(date);
-//     // console.log(formatter.format(new Date(auction.endDate)));
-//     if ( date > formatter.format(new Date(auction.endDate))) setIsAuctionAvailable(false);
-//   }, [auction.endDate, formatter])
-
-//   console.log(isAuctionAvailable);
 
   return (
     <Layout>
@@ -116,31 +106,35 @@ export default function AuctionPage({
                   {auction.currentBid !== -1 ? auction.currentBid : "None"}
                 </span>
               </h3>
-              { formatter.format(new Date()) > formatter.format(new Date(auction.endDate)) && <form onSubmit={onSubmit} className="flex gap-4">
-                <input
-                  className="w-24 p-2"
-                  value={bid}
-                  min={auction.currentBid + 1}
-                  type="number"
-                  onChange={(e) => setBid(parseInt(e.target.value))}
-                />
-                <Button type="submit">Place Bid</Button>
-              </form>}
-                <h3 className="text-primary-dark text-center">
-                    Auction ends:
-                    <p className="text-black">
-                        {formatter.format(new Date(auction.endDate))}
-                    </p>
-                </h3>
-                <div className="flex justify-between items-center space-x-10">
+              {new Date() < new Date(auction.endDate) && (
+                <form onSubmit={onSubmit} className="flex gap-4">
+                  <input
+                    className="w-24 p-2"
+                    value={bid}
+                    min={auction.currentBid + 1}
+                    type="number"
+                    onChange={(e) => setBid(parseInt(e.target.value))}
+                  />
+                  <Button type="submit">Place Bid</Button>
+                </form>
+              )}
+              <h3 className="text-primary-dark text-center">
+                Auction ends:
+                <p className="text-black">
+                  {formatter.format(new Date(auction.endDate))}
+                </p>
+              </h3>
+              <div className="flex justify-between items-center space-x-10">
                 <div className="flex text-primary-dark items-center space-x-2">
-                    <p className="text-black">Creator: </p>
-                    <GoUserPage username={user?.username} avatar={user?.avatar}/>
+                  <p className="text-black">Creator: </p>
+                  <GoUserPage username={user?.username} avatar={user?.avatar} />
                 </div>
-                { username!= "None" && <div className="flex text-primary-dark items-center space-x-2">
+                {username != "None" && (
+                  <div className="flex text-primary-dark items-center space-x-2">
                     <p className="text-black">Bidder: </p>
-                    <GoUserPage username={username} avatar={avatar}/>
-                </div>}
+                    <GoUserPage username={username} avatar={avatar} />
+                  </div>
+                )}
               </div>
             </div>
           </section>

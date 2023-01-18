@@ -57,6 +57,7 @@ export type Auction = {
   currentBidderUid: string;
   creationDate: Timestamp;
   endDate: Timestamp;
+  author: string;
 };
 
 export type AuctionDoc = {
@@ -68,6 +69,7 @@ export type AuctionDoc = {
   currentBidderUid: string;
   creationDate: Timestamp;
   endDate: Timestamp;
+  author: string;
 };
 
 export type Result<T> = {

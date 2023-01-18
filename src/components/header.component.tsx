@@ -69,7 +69,24 @@ export default function Header() {
 
   return (
     <div className="w-[90vw] mx-auto  bg-primary mix-blend-multiply px-2 border-blue-800 rounded-b-3xl flex space-between transition ease-out">
-      <div className="flex-1"></div>
+      <div className="flex-1 w-full h-full grid items-center">
+        <Link href="/student-search" className="ml-2 w-12 h-12 justify-start">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            width="100%"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+            />
+          </svg>
+        </Link>
+      </div>
       <div className="flex-[3_1_0%] w-full grid place-items-center">
         <Link href="/" className="inline-block w-16 h-16 relative">
           <Image src={Logo} alt="School3" fill />
