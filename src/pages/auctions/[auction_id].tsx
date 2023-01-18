@@ -22,6 +22,7 @@ import { Auction, Token, User } from "../../utils/types.util";
 import Link from "next/link";
 import { UserContext } from "../../contexts/user.context";
 import AuctionImage from "../../components/auction-image.component";
+import GoUserPage from "../../components/go-user-page.component";
 
 export async function getServerSideProps({ params: { auction_id } }: any) {
   const auction = await getAuctionById(auction_id);
@@ -63,7 +64,7 @@ type Props = {
 export default function AuctionPage({
   auction,
   token,
-  currentBidder: { username },
+  currentBidder: { username, avatar },
 }: Props) {
   const [bid, setBid] = useState<number>(auction.currentBid + 2);
   const {
@@ -80,6 +81,11 @@ export default function AuctionPage({
     timeStyle: "short",
   });
 
+  const { data: user } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => getUserById(token.uid),
+  });
+
   return (
     <Layout>
       <Overlay>
@@ -91,16 +97,15 @@ export default function AuctionPage({
             >
               <AuctionImage token={token} />
             </Link>
-            <div className="card shadow-lg rounded-none w-[350px] bg-newGray flex flex-col justify-between py-6 px-12">
-              <h1>{token.title}</h1>
-              <h3>{token.author}</h3>
-              <h3>
+            <div className="card shadow-lg rounded-none w-[700px] bg-newGray flex flex-col justify-between py-6 px-12 items-center">
+              <h1 className="text-center">{token.title}</h1>
+              <h3 className="text-center">
                 Current Bid:{" "}
                 <span className="font-bold">
                   {auction.currentBid !== -1 ? auction.currentBid : "None"}
                 </span>
               </h3>
-              <form onSubmit={onSubmit} className="flex justify-between">
+              <form onSubmit={onSubmit} className="flex gap-4">
                 <input
                   className="w-24 p-2"
                   value={bid}
@@ -110,17 +115,21 @@ export default function AuctionPage({
                 />
                 <Button type="submit">Place Bid</Button>
               </form>
-              <div className="flex justify-between items-center">
-                <h3 className="text-primary-dark">
-                  Auction ends:
-                  <p className="text-black">
-                    {formatter.format(new Date(auction.endDate))}
-                  </p>
+                <h3 className="text-primary-dark text-center">
+                    Auction ends:
+                    <p className="text-black">
+                        {formatter.format(new Date(auction.endDate))}
+                    </p>
                 </h3>
-                <h3 className="text-primary-dark text-md">
-                  Bidder:
-                  <p className="text-black">{username}</p>
-                </h3>
+                <div className="flex justify-between items-center space-x-10">
+                <div className="flex text-primary-dark items-center space-x-2">
+                    <p className="text-black">Creator: </p>
+                    <GoUserPage username={user?.username} avatar={user?.avatar}/>
+                </div>
+                { username!= "None" && <div className="flex text-primary-dark items-center space-x-2">
+                    <p className="text-black">Bidder: </p>
+                    <GoUserPage username={username} avatar={avatar}/>
+                </div>}
               </div>
             </div>
           </section>
