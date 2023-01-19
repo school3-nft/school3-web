@@ -74,7 +74,7 @@ export default function AuctionPage({
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await updateCurrentBid(clientUid, auction.auction_id, bid);
-    location.reload();
+    // location.reload();
   };
 
   const formatter = new Intl.DateTimeFormat(undefined, {
