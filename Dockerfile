@@ -21,4 +21,4 @@ COPY ./create_env.sh /app/create_env.sh
 
 EXPOSE 3000
 
-CMD ["bash", "-c", "./create_env.sh && npm run dev"]
+CMD ["bash", "-c", "./create_env.sh && next build && next start"]
