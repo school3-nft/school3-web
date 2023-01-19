@@ -56,6 +56,5 @@ export const fetchMintToken = async (
     uri: ipfs,
     transfer_fee: transferFee,
   });
-  console.log(data);
   return { data, returnCode: "200" } as Result<TokenData>;
 };

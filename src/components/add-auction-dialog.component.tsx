@@ -14,9 +14,11 @@ export default function AddAuctionDialog({ isOpen, close }: Props) {
   const [hash, setHash] = useState<string>("");
   const [date, setDate] = useState<string>("2023-01-18T00:00");
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    createAuction(hash, date);
+    await createAuction(hash, date);
+    close();
+    window.location.reload();
   };
 
   return (

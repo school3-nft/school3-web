@@ -60,6 +60,7 @@ export type Auction = {
   creationDate: Timestamp;
   endDate: Timestamp;
   author: string;
+  nftoken_id: string;
 };
 
 export type AuctionDoc = {
@@ -72,6 +73,7 @@ export type AuctionDoc = {
   creationDate: Timestamp;
   endDate: Timestamp;
   author: string;
+  nftoken_id: string;
 };
 
 export type Result<T> = {

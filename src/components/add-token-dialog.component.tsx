@@ -2,7 +2,11 @@ import { FormEvent, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 import { fetchMintToken } from "../utils/fetchers.util";
-import { createToken, getWallet } from "../utils/firebase.util";
+import {
+  createToken,
+  getWallet,
+  incrementSequence,
+} from "../utils/firebase.util";
 import { User, TokenType } from "../utils/types.util";
 import { SubmitBtn } from "./button.component";
 import DialogWrapper from "./dialog.component";
@@ -31,6 +35,7 @@ export default function AddTokenDialog({ isOpen, close, profileUser }: Props) {
     async () => {
       const { seed, sequence } = await getWallet(uid);
       const { data: token } = await fetchMintToken(seed, sequence, ipfs, 0);
+      await incrementSequence(uid);
       await createToken(
         token.hash,
         ipfs,

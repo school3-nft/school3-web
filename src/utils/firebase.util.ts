@@ -236,7 +236,7 @@ export const getTokensByUid = async (clientUid: string) => {
 };
 
 export const createAuction = async (token_id: string, endDate: string) => {
-  const { title, type, author } = await getTokenById(token_id);
+  const { title, type, author, nftoken_id } = await getTokenById(token_id);
   const docRef = await addDoc(collection(db, "auctions"), {
     currentBid: -1,
     title,
@@ -246,6 +246,7 @@ export const createAuction = async (token_id: string, endDate: string) => {
     currentBidderUid: "",
     endDate: Timestamp.fromDate(new Date(endDate)),
     author,
+    nftoken_id,
   } as AuctionDoc);
 };
 
@@ -298,5 +299,12 @@ export const updateCurrentBid = async (
   const docRef = await updateDoc(doc(db, "auctions", auction_id), {
     currentBid: newBid,
     currentBidderUid: uid,
+  });
+};
+
+export const incrementSequence = async (uid: string) => {
+  const user = await getUserById(uid);
+  const docRef = await updateDoc(doc(db, "users", uid), {
+    sequence: user.sequence + 1,
   });
 };
